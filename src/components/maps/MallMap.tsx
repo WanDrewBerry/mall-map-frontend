@@ -57,8 +57,10 @@ const MallMap: React.FC = () => {
         let page = 1;
         let totalPages = 1;
 
+        const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
         while (page <= totalPages) {
-          const response = await fetch(`/api/malls?page=${page}&limit=10`);
+          const response = await fetch(`${API_BASE}/api/malls?page=${page}&limit=10`);
           const data = await response.json();
 
           if (data && Array.isArray(data.malls)) {
