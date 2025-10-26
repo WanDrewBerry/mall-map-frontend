@@ -16,6 +16,7 @@ interface Mall {
 
 const MallDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const [mall, setMall] = useState<Mall | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showReviewForm, setShowReviewForm] = useState<boolean>(false);
@@ -24,11 +25,11 @@ const MallDetails: React.FC = () => {
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth < 768);
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role") || "";
@@ -40,7 +41,7 @@ useEffect(() => {
     try {
       setLoading(true); // ✅ Prevents loading state issues
 
-      const response = await fetch(`http://localhost:5000/api/malls/${id}`);
+      const response = await fetch(`${API_BASE}/api/malls/${id}`);
       if (!response.ok) throw new Error("Failed to fetch mall details.");
       const data = await response.json();
 
@@ -81,7 +82,7 @@ useEffect(() => {
     console.log("🛠️ Debug: Attempting to delete image with ID:", imageId); // ✅ Debug before request
 
     try {
-      const response = await fetch(`http://localhost:5000/api/malls/${id}/images/${imageId}`, {
+      const response = await fetch(`${API_BASE}/api/malls/${id}/images/${imageId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +104,7 @@ useEffect(() => {
 
   const handleDeleteReview = async (reviewId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/malls/${id}/reviews/${reviewId}`, {
+      const response = await fetch(`${API_BASE}/api/malls/${id}/reviews/${reviewId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
@@ -121,21 +122,21 @@ useEffect(() => {
 
   return (
     <div style={{
-  padding: "20px",
-  maxWidth: "100%",
-  margin: "auto",
-  marginTop: "80px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
-  flexWrap: "wrap"
-}}>
+      padding: "20px",
+      maxWidth: "100%",
+      margin: "auto",
+      marginTop: "80px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "flex-start",
+      flexWrap: "wrap"
+    }}>
       <div style={{
-  display: isMobile ? "flex" : "grid",
-  flexDirection: isMobile ? "column" : undefined,
-  gridTemplateColumns: isMobile ? undefined : "55% 45%",
-  gap: isMobile ? "20px" : "40px"
-}}>
+        display: isMobile ? "flex" : "grid",
+        flexDirection: isMobile ? "column" : undefined,
+        gridTemplateColumns: isMobile ? undefined : "55% 45%",
+        gap: isMobile ? "20px" : "40px"
+      }}>
         {/* 📸 Mall Details Section */}
         <div id="mall-details">
           <h1>{mall.name}</h1>
@@ -180,7 +181,7 @@ useEffect(() => {
                   justifyContent: "center",
                   alignItems: "center",
                 }}>
-                  <img src={`http://localhost:5000${photo.url}`} alt="Mall"
+                  <img src={`${API_BASE}${photo.url}`} alt="Mall"
                     style={{
                       width: "100%",
                       height: "100%",
