@@ -2,17 +2,15 @@ import React, { useState } from "react";
 
 interface ImageUploaderProps {
   mallId: string;
-  userRole: string; // ✅ Add userRole to properly receive the prop
+  userRole: string; // ✅ Passed from parent component
   onUploadSuccess: () => void;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ mallId, onUploadSuccess }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ mallId, userRole, onUploadSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>("");
 
-  // ✅ Retrieve and validate user role
-  const userRole = (localStorage.getItem("userRole") || "").toLowerCase().trim();
-  console.log("User Role:", userRole); // ✅ Debugging: Check stored role value
+  const normalizedRole = userRole.toLowerCase().trim(); // ✅ Normalize role from prop
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
@@ -72,8 +70,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ mallId, onUploadSuccess }
 
   return (
     <div style={{ padding: "10px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "400px", margin: "10px 0" }}>
-      {/* ✅ Only display upload section if the user is an admin */}
-      {userRole === "admin" ? (
+      {normalizedRole === "admin" ? (
         <>
           <input type="file" accept="image/*" onChange={handleFileChange} id="fileInput" />
           {file && <p style={{ color: "green", fontSize: "14px" }}>📂 {file.name} ({(file.size / 1024).toFixed(2)} KB)</p>}
