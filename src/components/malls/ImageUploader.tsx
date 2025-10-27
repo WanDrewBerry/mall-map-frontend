@@ -51,8 +51,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ mallId, userRole, onUploa
         body: formData,
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "❌ Upload failed.");
+      // ✅ Check status before parsing
+      if (!response.ok) {
+        const errorText = await response.text(); // fallback if not JSON
+        throw new Error(errorText || "❌ Upload failed.");
+      }
+
+      const data = await response.json(); // ✅ Safe to parse now
 
       console.log("✅ Upload successful!");
       setMessage(`✅ ${data.message}`);
